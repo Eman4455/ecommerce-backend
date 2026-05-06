@@ -1,11 +1,4 @@
-/**
- * Integration tests for POST /users
- *
- * Requirements:
- *  - A real PostgreSQL instance must be reachable (configured via env vars).
- *  - No mocking — every assertion hits the actual database.
- *  - Test data is cleaned up after each test.
- */
+
 
 const request = require('supertest');
 const app = require('../src/app');
@@ -36,13 +29,9 @@ afterAll(async () => {
   await pool.end();
 });
 
-// ---------------------------------------------------------------------------
-// Helper
-// ---------------------------------------------------------------------------
 
-/**
- * Wraps supertest POST /users and tracks the email for cleanup.
- */
+
+
 async function registerUser(payload) {
   if (payload && payload.email) {
     insertedEmails.push(payload.email);
@@ -50,9 +39,7 @@ async function registerUser(payload) {
   return request(app).post('/users').send(payload).set('Content-Type', 'application/json');
 }
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
+-
 
 describe('POST /users', () => {
   it('creates a new user and returns 201 with the user object', async () => {

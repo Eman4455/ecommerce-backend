@@ -1,8 +1,4 @@
-/**
- * Minimal migration helper.
- * Creates the users table if it does not already exist.
- * Called by the test setup so the schema is always ready.
- */
+
 const pool = require('./db');
 
 async function migrate() {
