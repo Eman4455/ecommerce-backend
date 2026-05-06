@@ -1,0 +1,50 @@
+name: Run Integration Tests
+
+on:
+  push:
+    branches:
+      - '**'   # every branch, every push
+
+jobs:
+  test:
+    name: Integration Tests (Node + PostgreSQL)
+    runs-on: ubuntu-latest
+
+    # Spin up a real PostgreSQL service container — no mocking.
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 1234
+          POSTGRES_DB: ecommerce_test
+        ports:
+          - 5432:5432
+        # Wait until the DB is ready to accept connections.
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGDATABASE: ecommerce_test
+          PGUSER: postgres
+          PGPASSWORD: 1234
+        run: npm test
